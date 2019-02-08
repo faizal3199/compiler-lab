@@ -1,0 +1,6 @@
+while(1!=2)
+begin
+    a=4122;
+    b=12*a;
+    c=c+b;
+end

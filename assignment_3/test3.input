@@ -1,0 +1,4 @@
+while(b=2)
+begin
+    x=y+z;
+end
