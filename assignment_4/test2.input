@@ -1,0 +1,5 @@
+while(a != b)
+begin
+    a = b + 1;
+    a += c;
+end$
