@@ -1,0 +1,14 @@
+E' -> E
+E -> E add T
+E -> E sub T
+E -> T
+T -> T mul F
+T -> T div F
+T -> F
+F -> num
+F -> sub F
+F -> lparn E rparn
+
+# http://jsmachines.sourceforge.net/machines/lr1.html
+
+# num mul num add num sub lparn num add num add lparn num div num rparn rparn
