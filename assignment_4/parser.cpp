@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <ctype.h>
 
 #define vector_string vector<string>
 
@@ -48,6 +49,7 @@ string parseTable[30][21] = {
 map<int, vector<int>> reducingRules;
 vector<int> stateStack;
 vector<int> symbolsStack;
+map<string, int> numToken;
 
 bool debugStatus = (getenv("DEBUG")?true:false);
 
@@ -66,51 +68,67 @@ void debugLog(char* x){
 
 void handleInput(char*);
 
+bool checkAllLower(string token){
+    for(int i=0;i<token.length();i++){
+        if(!islower(token.at(i))){
+            return false;
+        }
+    }
+    return true;
+}
+
+void generateNumsFromRules(map<int, vector<string>> &rules){
+    debugLog("Generating nums for token in rules");
+    int index = 1;
+    bool epsilonPresent = false;
+
+    // Insert all terminals
+    for(const auto &pair: rules){
+        for(int i=0;i<pair.second.size();i++){
+            if (pair.second.at(i) == ""){
+                epsilonPresent = true;
+                continue;
+            }
+            if(checkAllLower(pair.second.at(i))){
+                auto temp = numToken.insert({pair.second.at(i), index});
+
+                if(temp.second){
+                    string tmp = "Inserting `"+pair.second.at(i) + "` at index: " + to_string(index);
+                    debugLog((char *)tmp.c_str());
+                    index++;
+                }
+            }
+        }
+    }
+
+    numToken.insert({"$", index});
+    index++;
+
+    // Insert all non terminals
+    // Consider only the left term of the production rule
+    for(const auto &pair: rules){
+        auto temp = numToken.insert({pair.second.at(0), index});
+
+        if(temp.second){
+            string tmp = "Inserting `"+pair.second.at(0) + "` at index: " + to_string(index);
+            debugLog((char *)tmp.c_str());
+            index++;
+        }
+    }
+
+    if(epsilonPresent){
+        numToken.insert({"", index});
+    }
+    debugLog("Nums generated for tokens");
+}
+
 int getTokenNum(char* inputToken){
     string token(inputToken);
 
-    if(token == "while")
-        return 1;
-    if(token == "begin")
-        return 2;
-    if(token == "end")
-        return 3;
-    if(token == "lparn")
-        return 4;
-    if(token == "rop")
-        return 5;
-    if(token == "rparn")
-        return 6;
-    if(token == "id")
-        return 7;
-    if(token == "num")
-        return 8;
-    if(token == "semi")
-        return 9;
-    if(token == "aop")
-        return 10;
-    if(token == "mop")
-        return 11;
-    if(token == "$")
-        return 12;
-    if(token == (char*)"W'")
-        return 13;
-    if(token == "W")
-        return 14;
-    if(token == "C")
-        return 15;
-    if(token == "I")
-        return 16;
-    if(token == "S")
-        return 17;
-    if(token == "S'")
-        return 18;
-    if(token == "P")
-        return 19;
-    if(token == "E")
-        return 20;
-    if(token == "")
-        return 100;
+    auto index = numToken.find(inputToken);
+    if (index != numToken.end()){
+        return index->second;
+    }
     
     printf("Invalid Token: `%s`\n",inputToken);
     exit(1);
@@ -229,7 +247,7 @@ void handleInput(char* value){// At index 1
     debugLog("handleInput done!");
 }
 
-map<int, vector<int>> convertRulesToNums(map<int, vector<string>> &rules){
+void convertRulesToNums(map<int, vector<string>> &rules){
     debugLog("Converting rules...");
     for(const auto &pair: rules){
         vector<int> tmp;
@@ -242,7 +260,7 @@ map<int, vector<int>> convertRulesToNums(map<int, vector<string>> &rules){
 }
 
 void prepareRules(){
-    debugLog("[+] Preparing rules");
+    debugLog("Preparing rules");
 
     map<int, vector_string> tempReducingRules;
     // W' -> W
@@ -270,6 +288,7 @@ void prepareRules(){
     // E -> I
     tempReducingRules[11] = vector_string{"E", "I"};
 
+    generateNumsFromRules(tempReducingRules);
     convertRulesToNums(tempReducingRules);
     debugLog("Rules prepared");
 }
