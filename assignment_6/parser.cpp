@@ -4,6 +4,7 @@
 #include <map>
 #include <algorithm>
 #include <ctype.h>
+#include "terminalProperty.cpp"
 
 #define vector_string vector<string>
 extern char* yytext;
@@ -52,27 +53,11 @@ string parseTable[34][13] = {
     {"33", "r9", "r9", "r9", "r9", " ", " ", "r9", " ", " ", " ", " ", " "}
 };
 
-// Define data structures
-struct symbolStorage
-{
-    bool isPrimitive;
-    string text;
-    int val;
-
-    symbolStorage(bool x, char* y){
-        isPrimitive = x;
-        text = string(y);
-    }
-
-    symbolStorage(bool x){
-        isPrimitive = x;
-    }
-};
 
 map<int, vector<int>> reducingRules;
-map<int, symbolStorage* (*)(vector<symbolStorage*> &)> callbackPointers;
+map<int, Variable* (*)(vector<Variable*> &)> callbackPointers;
 vector<int> stateStack;
-vector<pair<int, symbolStorage*>> symbolsStack;
+vector<pair<int, Variable*>> symbolsStack;
 map<string, int> numToken;
 
 bool debugStatus = (getenv("DEBUG")?true:false);
@@ -83,7 +68,7 @@ void dumpVector(vector<int> &x){
     }
     printf("\n");
 }
-void dumpVector(vector<pair<int, symbolStorage*>> &x){
+void dumpVector(vector<pair<int, Variable*>> &x){
     for(int i=0;i<x.size();i++){
         printf("%d ",x.at(i).first);
     }
@@ -185,10 +170,10 @@ void applyReduceRule(int ruleNumber, char* value){
         printf("[+] Popping %d states and input.\n", reduceCount);
     }
 
-    vector<symbolStorage*> argumentHolder;
+    vector<Variable*> argumentHolder;
     while(reduceCount--){
         int ruleTop, lastState;
-        pair<int, symbolStorage*> symbolTop;
+        pair<int, Variable*> symbolTop;
 
         // Pop states
         lastState = stateStack.back();
@@ -237,7 +222,11 @@ void applyReduceRule(int ruleNumber, char* value){
 
 void changeState(int tokenNum, int newState){
     stateStack.push_back(newState);
-    symbolsStack.push_back(make_pair(tokenNum, new symbolStorage(true, yytext)));
+    Variable* temp = new Variable();
+    
+    temp->add<string>("text", string(yytext));
+
+    symbolsStack.push_back(make_pair(tokenNum, temp));
 }
 
 void handleInput(char* value){// At index 1
@@ -270,7 +259,7 @@ void handleInput(char* value){// At index 1
     }
     else if(string(nextAction) == "acc"){
         printf("Accepted\n");
-        printf("Value: %d\n", symbolsStack.back().second->val);
+        printf("Value: %d\n", symbolsStack.back().second->get<int>("val"));
         exit(0);
     }
     else{
@@ -295,58 +284,81 @@ void convertRulesToNums(map<int, vector<string>> &rules){
 }
 
 // Reducing callbacks
-symbolStorage* callback_r0(vector<symbolStorage*> &x){
-    symbolStorage* retVal = new symbolStorage(false);
-    retVal->val = x[0]->val;
+Variable* callback_r0(vector<Variable*> &x){
+    Variable* retVal = new Variable();
+    
+    retVal->add<int>("val", x[0]->get<int>("val"));
+
     return retVal;
 }
 
-symbolStorage* callback_r1(vector<symbolStorage*> &x){
-    symbolStorage* retVal = new symbolStorage(false);
-    retVal->val = x[0]->val + x[2]->val;
+Variable* callback_r1(vector<Variable*> &x){
+    Variable* retVal = new Variable();
+   
+    int temp = x[0]->get<int>("val") + x[2]->get<int>("val");
+    retVal->add<int>("val", temp);
+
     return retVal;
 }
 
-symbolStorage* callback_r2(vector<symbolStorage*> &x){
-    symbolStorage* retVal = new symbolStorage(false);
-    retVal->val = x[0]->val - x[2]->val;
+Variable* callback_r2(vector<Variable*> &x){
+    Variable* retVal = new Variable();
+    
+    int temp = x[0]->get<int>("val") - x[2]->get<int>("val");
+    retVal->add<int>("val", temp);
+
     return retVal;
 }
 
-symbolStorage* callback_r4(vector<symbolStorage*> &x){
-    symbolStorage* retVal = new symbolStorage(false);
-    retVal->val = x[0]->val * x[2]->val;
+Variable* callback_r4(vector<Variable*> &x){
+    Variable* retVal = new Variable();
+    
+    int temp = x[0]->get<int>("val") * x[2]->get<int>("val");
+    retVal->add<int>("val", temp);
+
     return retVal;
 }
 
-symbolStorage* callback_r5(vector<symbolStorage*> &x){
-    symbolStorage* retVal = new symbolStorage(false);
-    retVal->val = x[0]->val / x[2]->val;
+Variable* callback_r5(vector<Variable*> &x){
+    Variable* retVal = new Variable();
+    
+    int temp = x[0]->get<int>("val") / x[2]->get<int>("val");
+    retVal->add<int>("val", temp);
+
     return retVal;
 }
 
-symbolStorage* callback_r7(vector<symbolStorage*> &x){
-    symbolStorage* retVal = new symbolStorage(false);
-    retVal->val = atoi(x[0]->text.c_str());
+Variable* callback_r7(vector<Variable*> &x){
+    Variable* retVal = new Variable();
+
+    int val = atoi(x[0]->get<string>("text").c_str());
+    retVal->add<int>("val", val);
+    
     return retVal;
 }
 
-symbolStorage* callback_r8(vector<symbolStorage*> &x){
-    symbolStorage* retVal = new symbolStorage(false);
-    retVal->val = -(x[0]->val);
+Variable* callback_r8(vector<Variable*> &x){
+    Variable* retVal = new Variable();
+
+    int temp = x[1]->get<int>("val");
+    retVal->add<int>("val", -temp);
+
     return retVal;
 }
 
-symbolStorage* callback_r9(vector<symbolStorage*> &x){
-    symbolStorage* retVal = new symbolStorage(false);
-    retVal->val = x[1]->val;
+Variable* callback_r9(vector<Variable*> &x){
+    Variable* retVal = new Variable();
+    
+    int temp = x[1]->get<int>("val");
+    retVal->add<int>("val", temp);
+
     return retVal;
 }
 
 void prepareRules(){
     debugLog("Preparing rules");
 
-    symbolStorage* (*callback_proto)(vector<symbolStorage*> &);
+    Variable* (*callback_proto)(vector<Variable*> &);
 
     map<int, vector_string> tempReducingRules;
     // E' -> E
