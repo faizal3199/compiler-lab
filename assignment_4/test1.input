@@ -1,4 +1,6 @@
-while ( a < 10 )
+while ( a < -b )
 begin
     a = 1;
+    b = 22;
+    a = -b;
 end$

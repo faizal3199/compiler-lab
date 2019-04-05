@@ -351,8 +351,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 14
-#define YY_END_OF_BUFFER 15
+#define YY_NUM_RULES 15
+#define YY_END_OF_BUFFER 16
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -362,8 +362,8 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[39] =
     {   0,
-        0,    0,   15,   14,    4,   14,   13,   12,    6,    7,
-       12,   12,   12,   12,    8,    5,   10,   11,   10,    9,
+        0,    0,   16,   15,    4,   15,   14,   12,    6,    7,
+       12,   12,   13,   12,    8,    5,   10,   11,   10,    9,
         9,    9,    9,   10,   11,    8,    9,    9,    9,    9,
         9,    3,    9,    9,    9,    2,    1,    0
     } ;
@@ -809,14 +809,19 @@ YY_RULE_SETUP
 case 13:
 YY_RULE_SETUP
 #line 37 "parser.l"
-{handleInput("$");}
+{handleInput("sub");}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 38 "parser.l"
+{handleInput("$");}
+	YY_BREAK
+case 15:
+YY_RULE_SETUP
+#line 39 "parser.l"
 ECHO;
 	YY_BREAK
-#line 820 "lex.yy.c"
+#line 825 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1821,7 +1826,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 38 "parser.l"
+#line 39 "parser.l"
 
 
 /* The trick */ 

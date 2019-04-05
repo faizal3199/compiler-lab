@@ -33,7 +33,8 @@ mop        "*" | "/"  | "%"  | "-"  | "+"
 [a-z]+                          {handleInput("id");}
 "<"|">"|"<="|">="|"!="|"=="     {handleInput("rop");}
 "="|"*="|"/="|"%="|"-="|"+="    {handleInput("aop");}
-"*"|"/"|"%"|"-"|"+"             {handleInput("mop");}
+"*"|"/"|"%"|"+"                 {handleInput("mop");}
+"-"                             {handleInput("sub");}
 "$"                             {handleInput("$");}
 %%
 

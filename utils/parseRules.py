@@ -2,16 +2,18 @@
 template = 'tempReducingRules[{}] = vector_string{{"{}"}};'
 
 orginalRules = """
-E' -> E
-E -> E add T
-E -> E sub T
-E -> T
-T -> T mul F
-T -> T div F
-T -> F
-F -> num
-F -> sub F
-F -> lparn E rparn
+W' -> W
+W -> while C begin S end
+C -> lparn I rop I rparn
+S -> P semi S
+S -> ''
+P -> id aop E
+E -> I mop I
+E -> I sub I
+E -> I
+I -> id
+I -> num
+I -> sub I
 """
 
 orginalRules = filter(None, orginalRules.splitlines())
