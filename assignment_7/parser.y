@@ -4,6 +4,7 @@
 extern char yytext[];
 extern int column;
 extern FILE* yyin;
+extern int line_count;
 
 %}
 
@@ -438,5 +439,6 @@ int main(int argc, char* argv[]){
 int yyerror(char* s){
 	fflush(stdout);
 	printf("\n%*s\n%*s\n", column, "^", column, s);
+	printf("%s at line number %d\n", s, line_count);
     return 0;
 }

@@ -1,4 +1,4 @@
-int main(){
-    int az;
-    return 0;
+int func(int p){
+    int afsdhafakshfajsdh bdsfaksgjdf hsdghgsjfhdl;
+    return fu(p+1);
 }

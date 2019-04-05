@@ -351,8 +351,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 91
-#define YY_END_OF_BUFFER 92
+#define YY_NUM_RULES 92
+#define YY_END_OF_BUFFER 93
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -362,8 +362,8 @@ struct yy_trans_info
 	};
 static const flex_int16_t yy_accept[242] =
     {   0,
-        0,    0,   92,   90,   89,   89,   77,   90,   83,   76,
-       90,   71,   72,   81,   80,   68,   79,   75,   82,   37,
+        0,    0,   93,   91,   89,   90,   77,   91,   83,   76,
+       91,   71,   72,   81,   80,   68,   79,   75,   82,   37,
        37,   69,   65,   84,   70,   85,   88,   34,   34,   73,
        74,   86,   34,   34,   34,   34,   34,   34,   34,   34,
        34,   34,   34,   34,   34,   34,   34,   66,   87,   67,
@@ -1340,22 +1340,27 @@ YY_RULE_SETUP
 { count(); return('?'); }
 	YY_BREAK
 case 89:
-/* rule 89 can match eol */
 YY_RULE_SETUP
 #line 111 "parser.l"
 { count(); }
 	YY_BREAK
 case 90:
+/* rule 90 can match eol */
 YY_RULE_SETUP
 #line 112 "parser.l"
-{ /* ignore bad characters */ }
+{ count(); line_number();}
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 114 "parser.l"
+#line 113 "parser.l"
+{ /* ignore bad characters */ }
+	YY_BREAK
+case 92:
+YY_RULE_SETUP
+#line 115 "parser.l"
 ECHO;
 	YY_BREAK
-#line 1359 "lex.yy.c"
+#line 1364 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2360,7 +2365,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 114 "parser.l"
+#line 115 "parser.l"
 
 
 int yywrap(){
@@ -2418,6 +2423,10 @@ void count()
     ECHO;
 }
 
+int line_count=1;
+int line_number(){
+    line_count++;
+}
 
 int check_type()
 {

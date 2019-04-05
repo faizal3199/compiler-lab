@@ -108,7 +108,8 @@ L?\"(\\.|[^\\"])*\"	{ count(); return(STRING_LITERAL); }
 "|"			{ count(); return('|'); }
 "?"			{ count(); return('?'); }
 
-[ \t\v\n\f]		{ count(); }
+[ \t\v\f]		{ count(); }
+[\n]            { count(); line_number();}
 .			{ /* ignore bad characters */ }
 
 %%
@@ -168,6 +169,10 @@ void count()
     ECHO;
 }
 
+int line_count=1;
+int line_number(){
+    line_count++;
+}
 
 int check_type()
 {
