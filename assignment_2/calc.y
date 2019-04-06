@@ -27,6 +27,7 @@ level_two: level_two MULSIGN units  { $$ = $1 * $3 ;}
          | units  { $$ = $1;}
          ;
 units: NUMBER  { $$ = $1;}
+         | MINUSSIGN NUMBER { $$ = -$2; }
          | OPENBRACKETSIGN level_one CLOSEBRACKETSIGN  { $$ = $2;}
          ;
 %%
